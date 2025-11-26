@@ -60,18 +60,49 @@
         background: #4b5563; 
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
-  }
-}
-</script>
+  <!--
+    The importmap below is required when running inside Google AI Studio
+    (it points to AI Studio's special CDN). Serving the importmap locally
+    causes module resolution issues and can produce a blank/black screen.
+    We inject the importmap dynamically only when we detect AI Studio in
+    the hostname, so local dev will use the installed node_modules bundles
+    and CDNs are only used in the AI Studio environment.
+  -->
+  <script>
+    (function() {
+      try {
+        // Basic host detection for AI Studio; this accounts for common
+        // hostnames used by the platform. If your Studio URL differs,
+        // adjust `aiHostPatterns` accordingly.
+        const aiHostPatterns = ['ai.studio', 'aistudio', 'studio.apps'];
+        const host = window.location.hostname || '';
+        const isAiStudio = aiHostPatterns.some(pattern => host.includes(pattern));
+        if (!isAiStudio) return;
+
+        const importMap = {
+          imports: {
+            "react": "https://aistudiocdn.com/react@^19.2.0",
+            "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+            "react/": "https://aistudiocdn.com/react@^19.2.0/",
+            "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+          }
+        };
+        const script = document.createElement('script');
+        script.type = 'importmap';
+        script.textContent = JSON.stringify(importMap);
+        document.head.appendChild(script);
+      } catch (e) {
+        // Don't block local dev if anything goes wrong here.
+        // We intentionally swallow the error because local dev should
+        // always use node_modules, not remote CDNs.
+        console.warn('Importmap injection failed:', e);
+      }
+    })();
+  </script>
 </head>
   <body>
     <div id="root"></div>
+    <!-- Vite entry for local dev (keeps HMR & module loading working locally) -->
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
