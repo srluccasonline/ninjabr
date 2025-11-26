@@ -1,11 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
-import { AuthState, ViewState, Profile, User } from './types';
+import { AuthState, ViewState, AppProfile, User, Proxy } from './types';
 import { mockService } from './services/mockService';
 import { Login } from './views/Login';
 import { Layout } from './components/Layout';
 import { Dashboard } from './views/Dashboard';
-import { Profiles } from './views/Profiles';
+import { Profiles } from './views/Profiles'; // Actually the "Apps" view now
 import { Users } from './views/Users';
+import { Proxies } from './views/Proxies';
+import { API } from './views/API';
+import { Logs } from './views/Logs';
 
 const App = () => {
   const [auth, setAuth] = useState<AuthState>({
@@ -14,18 +18,24 @@ const App = () => {
   });
 
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [apps, setApps] = useState<AppProfile[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [proxies, setProxies] = useState<Proxy[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   // Load mock data on auth
   useEffect(() => {
     if (auth.isAuthenticated) {
       setIsLoadingData(true);
-      Promise.all([mockService.getProfiles(), mockService.getUsers()])
-        .then(([p, u]) => {
-          setProfiles(p);
+      Promise.all([
+        mockService.getApps(), 
+        mockService.getUsers(),
+        mockService.getProxies()
+      ])
+        .then(([p, u, px]) => {
+          setApps(p);
           setUsers(u);
+          setProxies(px);
         })
         .finally(() => setIsLoadingData(false));
     }
@@ -43,8 +53,9 @@ const App = () => {
   const handleLogout = () => {
     setAuth({ isAuthenticated: false, user: null });
     setCurrentView('dashboard');
-    setProfiles([]);
+    setApps([]);
     setUsers([]);
+    setProxies([]);
   };
 
   if (!auth.isAuthenticated) {
@@ -65,13 +76,19 @@ const App = () => {
 
     switch (currentView) {
       case 'dashboard':
-        return <Dashboard profiles={profiles} users={users} />;
-      case 'profiles':
-        return <Profiles profiles={profiles} setProfiles={setProfiles} />;
+        return <Dashboard apps={apps} users={users} proxies={proxies} />;
+      case 'apps': // Replaces 'profiles'
+        return <Profiles apps={apps} proxies={proxies} setApps={setApps} />;
+      case 'proxies':
+        return <Proxies proxies={proxies} setProxies={setProxies} />;
       case 'users':
         return <Users users={users} setUsers={setUsers} />;
+      case 'api':
+        return <API />;
+      case 'logs':
+        return <Logs />;
       default:
-        return <Dashboard profiles={profiles} users={users} />;
+        return <Dashboard apps={apps} users={users} proxies={proxies} />;
     }
   };
 

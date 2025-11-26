@@ -37,7 +37,7 @@
         },
       };
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -59,50 +59,49 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #4b5563; 
       }
-    </style>
-  <!--
-    The importmap below is required when running inside Google AI Studio
-    (it points to AI Studio's special CDN). Serving the importmap locally
-    causes module resolution issues and can produce a blank/black screen.
-    We inject the importmap dynamically only when we detect AI Studio in
-    the hostname, so local dev will use the installed node_modules bundles
-    and CDNs are only used in the AI Studio environment.
-  -->
-  <script>
-    (function() {
-      try {
-        // Basic host detection for AI Studio; this accounts for common
-        // hostnames used by the platform. If your Studio URL differs,
-        // adjust `aiHostPatterns` accordingly.
-        const aiHostPatterns = ['ai.studio', 'aistudio', 'studio.apps'];
-        const host = window.location.hostname || '';
-        const isAiStudio = aiHostPatterns.some(pattern => host.includes(pattern));
-        if (!isAiStudio) return;
 
-        const importMap = {
-          imports: {
-            "react": "https://aistudiocdn.com/react@^19.2.0",
-            "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-            "react/": "https://aistudiocdn.com/react@^19.2.0/",
-            "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
-          }
-        };
-        const script = document.createElement('script');
-        script.type = 'importmap';
-        script.textContent = JSON.stringify(importMap);
-        document.head.appendChild(script);
-      } catch (e) {
-        // Don't block local dev if anything goes wrong here.
-        // We intentionally swallow the error because local dev should
-        // always use node_modules, not remote CDNs.
-        console.warn('Importmap injection failed:', e);
+      /* Metallic Shine Animation */
+      @keyframes metallicShine {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 200% 50%;
+        }
       }
-    })();
-  </script>
+
+      .metallic-text {
+        background: linear-gradient(
+          to right,
+          #ffffff 0%,
+          #9ca3af 25%, /* silver/gray */
+          #f97316 45%, /* ninja orange */
+          #ffffff 50%,
+          #f97316 55%, /* ninja orange */
+          #9ca3af 75%, /* silver/gray */
+          #ffffff 100%
+        );
+        background-size: 200% auto;
+        color: #fff;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: metallicShine 4s linear infinite;
+        text-shadow: 0px 2px 10px rgba(249, 115, 22, 0.2);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+  }
+}
+</script>
 </head>
   <body>
     <div id="root"></div>
-    <!-- Vite entry for local dev (keeps HMR & module loading working locally) -->
-    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
