@@ -1,0 +1,5 @@
+{
+  "name": "NinjaBR Anti-Detect",
+  "description": "Gerenciador de perfis e browser anti-detect para multilogin.",
+  "requestFramePermissions": []
+}
